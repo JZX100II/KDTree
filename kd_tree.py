@@ -24,7 +24,7 @@ class KDTree():
     self.axis = 0
     self.min = sys.maxsize
     self.results = []
-    self.dim = dim # dimension of points
+    self.dim = dim
 
   def get_root(self):
     return self.root
@@ -55,11 +55,6 @@ class KDTree():
       node.left = self.build_tree_from_points(points[:mid], next_axis)
       node.right = self.build_tree_from_points(points[mid + 1:], next_axis)
 
-      if node.left != None:
-        print(node.left.data)
-      if node.right != None:
-        print(node.right.data)
-
       return node
 
     if len(points) == 1:
@@ -72,8 +67,6 @@ class KDTree():
     if self.distance(query_point, curr.data) < self.min:
       self.min = self.distance(query_point, curr.data)
     
-    print(self.min)
-    print(axis)
     is_left = False
     next_axis = (axis + 1) % self.dim
 
@@ -104,8 +97,6 @@ class KDTree():
     else:
       heapq.heappush(self.results, -squared_dist)
     
-    print(self.min)
-    print(axis)
     is_left = False
     next_axis = (axis + 1) % self.dim
 
@@ -126,9 +117,9 @@ class KDTree():
   def plot_subplanes(self, curr, axis):
     goes_through = curr.data[axis]
     if axis == 0:
-      plt.axvline(x=goes_through, color='r', linewidth=2)
+      plt.axvline(x=goes_through, color='r', linewidth=0.4)
     elif axis == 1:
-      plt.axhline(y=goes_through, color='r', linewidth=2)
+      plt.axhline(y=goes_through, color='b', linewidth=0.4)
 
     new_axis = (axis + 1) % self.dim
 
@@ -139,24 +130,3 @@ class KDTree():
   
 def plot_points(points: List[int]):
   plt.plot(points[0], points[1])
-
-points = [[1.5, 2], [1, 2], [3, 4], [5, 3], [4, 3]]
-print(sorted(points, key = lambda points: points[0]))
-
-numpy_points = np.array(points)
-print(numpy_points)
-
-tree = KDTree(3, 2)
-
-root = tree.get_root()
-
-tree.root = tree.build_tree_from_points(points, 0)
-
-query_point = [2, 2]
-tree.nn_search(query_point, tree.root, 0)
-print(tree.min)
-
-tree.knn_search(query_point, tree.root, 0)
-print(tree.results)
-
-tree.plot_subplanes(tree.root, 0)
